@@ -15,10 +15,7 @@ class PubSubTransport implements TransportInterface, SetupableTransportInterface
      */
     private $connection;
 
-    /**
-     * @var PhpSerializer|SerializerInterface
-     */
-    private $serializer;
+    private SerializerInterface $serializer;
 
     /**
      * @var PubSubReceiver
@@ -49,6 +46,11 @@ class PubSubTransport implements TransportInterface, SetupableTransportInterface
     public function getReceiver(): PubSubReceiver
     {
         return $this->receiver = new PubSubReceiver($this->connection, $this->serializer);
+    }
+
+    public function getSerializer(): SerializerInterface
+    {
+        return $this->serializer;
     }
 
     public function ack(Envelope $envelope): void
