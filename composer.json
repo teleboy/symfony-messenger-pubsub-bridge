@@ -1,5 +1,5 @@
 {
-    "name": "cedricziel/messenger-pubsub",
+    "name": "teleboy/symfony-messenger-pubsub-bridge",
     "description": "Bridging Symfony Messenger with Google Cloud Pub/Sub",
     "type": "symfony-bridge",
     "license": "MIT",
