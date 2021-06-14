@@ -51,7 +51,12 @@ class PubSubReceiver implements ReceiverInterface
             throw $exception;
         }
 
-        yield $envelope->with(new PubSubReceivedStamp($pubSubMessage, $pubSubMessage->subscription()));
+        /* The subscription is only set on the message itself when it is obtained via push delivery,
+        see the PHP doc of Google\Cloud\PubSub\Message::subscription().
+        So we use the subscription which the connection uses as fallback */
+        $subscription = $pubSubMessage->subscription() instanceof Subscription ? $pubSubMessage->subscription() : $this->connection->getSubscription();
+
+        yield $envelope->with(new PubSubReceivedStamp($pubSubMessage, $subscription));
     }
 
     /**
