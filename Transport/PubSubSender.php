@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport;
 
@@ -11,15 +12,9 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class PubSubSender implements SenderInterface
 {
-    /**
-     * @var PhpSerializer|SerializerInterface
-     */
-    private $serializer;
+    private SerializerInterface $serializer;
 
-    /**
-     * @var Connection
-     */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection, SerializerInterface $serializer = null)
     {

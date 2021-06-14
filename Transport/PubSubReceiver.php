@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport;
 
+use Google\Cloud\PubSub\Subscription;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\LogicException;
 use Symfony\Component\Messenger\Exception\MessageDecodingFailedException;
@@ -11,15 +13,9 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class PubSubReceiver implements ReceiverInterface
 {
-    /**
-     * @var PhpSerializer|SerializerInterface
-     */
-    private $serializer;
+    private SerializerInterface $serializer;
 
-    /**
-     * @var Connection
-     */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection, SerializerInterface $serializer = null)
     {
@@ -71,7 +67,7 @@ class PubSubReceiver implements ReceiverInterface
     private function findPubSubStamp(Envelope $envelope): PubSubReceivedStamp
     {
         $pubSubReceivedStamp = $envelope->last(PubSubReceivedStamp::class);
-        if (null === $pubSubReceivedStamp) {
+        if (!$pubSubReceivedStamp instanceof PubSubReceivedStamp) {
             throw new LogicException('No "PubSubReceivedStamp" stamp found on the Envelope.');
         }
 

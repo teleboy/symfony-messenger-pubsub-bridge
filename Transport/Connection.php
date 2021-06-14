@@ -10,7 +10,7 @@ use Symfony\Component\Messenger\Exception\InvalidArgumentException;
 
 class Connection
 {
-    private static $CLIENT_OPTIONS = [
+    private const CLIENT_OPTIONS = [
         'apiEndpoint',
         'projectId',
         'keyFilePath',
@@ -21,25 +21,20 @@ class Connection
         'transport'
     ];
 
-    /**
-     * @var array
-     */
-    private $clientConfig;
+    private array $clientConfig;
 
-    /**
-     * @var array
-     */
-    private $subscriptionConfig;
+    private array $subscriptionConfig;
 
-    /**
-     * @var array
-     */
-    private $topicConfig;
+    private array $topicConfig;
+
+    private ?PubSubClient $client = null;
+
+    private ?Subscription $subscription = null;
 
     public function __construct(array $clientConfig, array $subscriptionConfig, array $topicOptions)
     {
-        $this->clientConfig = $clientConfig;
-        $this->topicConfig = $topicOptions;
+        $this->clientConfig       = $clientConfig;
+        $this->topicConfig        = $topicOptions;
         $this->subscriptionConfig = $subscriptionConfig;
     }
 
@@ -76,7 +71,7 @@ class Connection
         parse_str($parsedUrl['query'] ?? '', $parsedQuery);
 
         // client options from DSN query parts
-        foreach (self::$CLIENT_OPTIONS as $option => $optionValue) {
+        foreach (self::CLIENT_OPTIONS as $option => $optionValue) {
             if (isset($parsedQuery[$option])) {
                 $clientOptions[$option] = $parsedQuery[$optionValue];
             }
@@ -106,7 +101,7 @@ class Connection
      *
      * @return array
      */
-    public function publish(string $body, array $headers = [])
+    public function publish(string $body, array $headers = []): array
     {
         return $this->publishOnTopic(
             $this->topic(),
@@ -115,7 +110,7 @@ class Connection
         );
     }
 
-    private function publishOnTopic(Topic $topic, string $body, array $headers)
+    private function publishOnTopic(Topic $topic, string $body, array $headers): array
     {
         return $topic->publish(new Message([
             'attributes' => $headers,
@@ -125,20 +120,30 @@ class Connection
 
     private function topic(): Topic
     {
-        $pubSub = new PubSubClient($this->clientConfig);
+        $pubSub = $this->getClient();
 
         return $pubSub->topic($this->topicConfig['name']);
     }
 
     public function get(): ?Message
     {
-        $pubSub = new PubSubClient($this->clientConfig);
-
-        $subscription = $pubSub->subscription($this->subscriptionConfig['name'], $this->topicConfig['name']);
-
-        $messages = $subscription->pull(['maxMessages' => 1]);
+        $messages = $this->getSubscription()->pull(['maxMessages' => 1]);
 
         return $messages[0] ?? null;
+    }
+
+    public function getSubscription(): Subscription
+    {
+        if (!$this->subscription instanceof Subscription) {
+            $pubSub = $this->getClient();
+
+            $this->subscription = $pubSub->subscription(
+                    $this->subscriptionConfig['name'],
+                    $this->topicConfig['name']
+            );
+        }
+
+        return $this->subscription;
     }
 
     public function ack(Message $message, Subscription $subscription): void
@@ -146,9 +151,9 @@ class Connection
         $subscription->acknowledge($message);
     }
 
-    public function setup()
+    public function setup(): void
     {
-        $pubSub = new PubSubClient($this->clientConfig);
+        $pubSub = $this->getClient();
 
         $topicName = $this->topicConfig['name'];
         if (!$pubSub->topic($topicName)->exists()) {
@@ -161,12 +166,21 @@ class Connection
         }
     }
 
-    public function nack(Message $getMessage, Subscription $getSubscription)
+    private function getClient(): PubSubClient
+    {
+        if (!$this->client instanceof PubSubClient) {
+            $this->client = new PubSubClient($this->clientConfig);
+        }
+
+        return $this->client;
+    }
+
+    public function nack(Message $getMessage, Subscription $getSubscription): void
     {
         // everything else than ack will result in nack
     }
 
-    public function getClientConfig()
+    public function getClientConfig(): array
     {
         return $this->clientConfig;
     }

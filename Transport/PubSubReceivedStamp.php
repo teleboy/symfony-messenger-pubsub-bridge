@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport;
 
@@ -11,33 +12,21 @@ use Symfony\Component\Messenger\Stamp\NonSendableStampInterface;
  */
 class PubSubReceivedStamp implements NonSendableStampInterface
 {
-    /**
-     * @var Message
-     */
-    private $message;
+    private Message $message;
 
-    /**
-     * @var Subscription
-     */
-    private $subscription;
+    private Subscription $subscription;
 
     public function __construct(Message $message, Subscription $subscription)
     {
-        $this->message = $message;
+        $this->message      = $message;
         $this->subscription = $subscription;
     }
 
-    /**
-     * @return Message
-     */
     public function getMessage(): Message
     {
         return $this->message;
     }
 
-    /**
-     * @return Subscription
-     */
     public function getSubscription(): Subscription
     {
         return $this->subscription;

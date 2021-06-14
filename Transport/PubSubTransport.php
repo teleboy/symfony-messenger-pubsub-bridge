@@ -10,22 +10,13 @@ use Symfony\Component\Messenger\Transport\TransportInterface;
 
 class PubSubTransport implements TransportInterface, SetupableTransportInterface
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
+    private Connection $connection;
 
     private SerializerInterface $serializer;
 
-    /**
-     * @var PubSubReceiver
-     */
-    private $receiver;
+    private ?PubSubReceiver $receiver = null;
 
-    /**
-     * @var PubSubSender
-     */
-    private $sender;
+    private ?PubSubSender $sender = null;
 
     public function __construct(Connection $connection, SerializerInterface $serializer = null)
     {
@@ -40,12 +31,16 @@ class PubSubTransport implements TransportInterface, SetupableTransportInterface
 
     public function get(): iterable
     {
-        return ($this->receiver ?? $this->getReceiver())->get();
+        return $this->getReceiver()->get();
     }
 
     public function getReceiver(): PubSubReceiver
     {
-        return $this->receiver = new PubSubReceiver($this->connection, $this->serializer);
+        if (!$this->receiver instanceof PubSubReceiver) {
+            $this->receiver = new PubSubReceiver($this->connection, $this->serializer);
+        }
+
+        return $this->receiver;
     }
 
     public function getSerializer(): SerializerInterface
@@ -55,25 +50,29 @@ class PubSubTransport implements TransportInterface, SetupableTransportInterface
 
     public function ack(Envelope $envelope): void
     {
-        ($this->receiver ?? $this->getReceiver())->ack($envelope);
+        $this->getReceiver()->ack($envelope);
     }
 
     public function reject(Envelope $envelope): void
     {
-        ($this->receiver ?? $this->getReceiver())->reject($envelope);
+        $this->getReceiver()->reject($envelope);
     }
 
     public function send(Envelope $envelope): Envelope
     {
-        return ($this->sender ?? $this->getSender())->send($envelope);
+        return $this->getSender()->send($envelope);
     }
 
     private function getSender(): PubSubSender
     {
-        return $this->sender = new PubSubSender($this->connection, $this->serializer);
+        if (!$this->sender instanceof PubSubSender) {
+            $this->sender = new PubSubSender($this->connection, $this->serializer);
+        }
+
+        return $this->sender;
     }
 
-    public function getConnection()
+    public function getConnection(): Connection
     {
         return $this->connection;
     }
