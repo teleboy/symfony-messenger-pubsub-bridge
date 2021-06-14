@@ -26,7 +26,13 @@ class PubSubSender implements SenderInterface
     {
         $encodedMessage = $this->serializer->encode($envelope);
         try {
-            $id = $this->connection->publish($encodedMessage['body'], $encodedMessage['headers'] ?? [])[0];
+            $publishedMessages = $this->connection->publish($encodedMessage['body'], $encodedMessage['headers'] ?? []);
+
+            if (!isset($publishedMessages['messageIds'][0])) {
+                throw new \Exception(\sprintf('Did not receive a message ID after publishing message of type "%s"', \get_class($envelope->getMessage())));
+            }
+
+            $id = $publishedMessages['messageIds'][0];
         } catch (\Exception $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
