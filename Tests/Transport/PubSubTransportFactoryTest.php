@@ -2,15 +2,19 @@
 
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Tests\Transport;
 
+use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\Config\Dsn;
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\Connection;
+use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\PubSubReceiver;
+use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\PubSubSender;
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\PubSubTransport;
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\PubSubTransportFactory;
+use Google\Cloud\PubSub\PubSubClient;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class PubSubTransportFactoryTest extends TestCase
 {
-    public function testSupportsOnlyAmqpTransports()
+    public function testSupports_onlyPubSubTransports(): void
     {
         $factory = new PubSubTransportFactory();
 
@@ -19,12 +23,21 @@ class PubSubTransportFactoryTest extends TestCase
         self::assertFalse($factory->supports('invalid-dsn', []));
     }
 
-    public function testItCreatesTheTransport()
+    public function testCreateTransport(): void
     {
         $factory = new PubSubTransportFactory();
         $serializer = $this->createMock(SerializerInterface::class);
 
-        $expectedTransport = new PubSubTransport(Connection::fromDsn('pubsub://my-project/my-topic?subscription=foo', ['host' => 'localhost']), $serializer);
+        $dsn          = new Dsn('pubsub://my-project/my-topic?subscription=foo', ['host' => 'localhost']);
+        $pubSubClient = new PubSubClient($dsn->getClientConfig()->toArray());
+        $connection   = new Connection($pubSubClient, $dsn->getSubscriptionConfig(), $dsn->getTopicConfig());
+
+        $expectedTransport = new PubSubTransport(
+            new PubSubSender($connection, $serializer),
+            new PubSubReceiver($connection, $serializer),
+            $connection,
+            $serializer
+        );
 
         self::assertEquals($expectedTransport, $factory->createTransport('pubsub://my-project/my-topic?subscription=foo', ['host' => 'localhost'], $serializer));
     }

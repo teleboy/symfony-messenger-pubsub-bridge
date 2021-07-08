@@ -7,7 +7,6 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\TransportException;
 use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
 use Symfony\Component\Messenger\Transport\Sender\SenderInterface;
-use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class PubSubSender implements SenderInterface
@@ -16,10 +15,10 @@ class PubSubSender implements SenderInterface
 
     private Connection $connection;
 
-    public function __construct(Connection $connection, SerializerInterface $serializer = null)
+    public function __construct(Connection $connection, SerializerInterface $serializer)
     {
         $this->connection = $connection;
-        $this->serializer = $serializer ?? new PhpSerializer();
+        $this->serializer = $serializer;
     }
 
     public function send(Envelope $envelope): Envelope

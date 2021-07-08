@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class PubSubSenderTest extends TestCase
 {
-    public function testItSendsTheEncodedMessage()
+    public function testItSendsTheEncodedMessage(): void
     {
         $envelope = new Envelope(new DummyMessage('Oy'));
         $encoded = ['body' => '...', 'headers' => ['type' => DummyMessage::class]];
@@ -20,13 +20,13 @@ class PubSubSenderTest extends TestCase
         $serializer->method('encode')->with($envelope)->willReturnOnConsecutiveCalls($encoded);
 
         $connection = $this->createMock(Connection::class);
-        $connection->expects(self::once())->method('publish')->with($encoded['body'], $encoded['headers'])->willReturn([123]);
+        $connection->expects(self::once())->method('publish')->with($encoded['body'], $encoded['headers'])->willReturn(['messageIds' => [123]]);
 
         $sender = new PubSubSender($connection, $serializer);
         $sender->send($envelope);
     }
 
-    public function testItSendsTheEncodedMessageWithoutHeaders()
+    public function testItSendsTheEncodedMessageWithoutHeaders(): void
     {
         $envelope = new Envelope(new DummyMessage('Oy'));
         $encoded = ['body' => '...'];
@@ -35,7 +35,7 @@ class PubSubSenderTest extends TestCase
         $serializer->method('encode')->with($envelope)->willReturnOnConsecutiveCalls($encoded);
 
         $connection = $this->createMock(Connection::class);
-        $connection->expects(self::once())->method('publish')->with($encoded['body'], [])->willReturn([123]);
+        $connection->expects(self::once())->method('publish')->with($encoded['body'], [])->willReturn(['messageIds' => [123]]);
 
         $sender = new PubSubSender($connection, $serializer);
         $sender->send($envelope);

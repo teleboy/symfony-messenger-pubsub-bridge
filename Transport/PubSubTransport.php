@@ -2,8 +2,8 @@
 
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport;
 
+use Google\Cloud\PubSub\PubSubClient;
 use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 use Symfony\Component\Messenger\Transport\SetupableTransportInterface;
 use Symfony\Component\Messenger\Transport\TransportInterface;
@@ -14,14 +14,16 @@ class PubSubTransport implements TransportInterface, SetupableTransportInterface
 
     private SerializerInterface $serializer;
 
-    private ?PubSubReceiver $receiver = null;
+    private PubSubReceiver $receiver;
 
-    private ?PubSubSender $sender = null;
+    private PubSubSender $sender;
 
-    public function __construct(Connection $connection, SerializerInterface $serializer = null)
+    public function __construct(PubSubSender $sender, PubSubReceiver $receiver, Connection $connection, SerializerInterface $serializer)
     {
+        $this->sender     = $sender;
+        $this->receiver   = $receiver;
         $this->connection = $connection;
-        $this->serializer = $serializer ?? new PhpSerializer();
+        $this->serializer = $serializer;
     }
 
     public function setup(): void
@@ -31,16 +33,7 @@ class PubSubTransport implements TransportInterface, SetupableTransportInterface
 
     public function get(): iterable
     {
-        return $this->getReceiver()->get();
-    }
-
-    public function getReceiver(): PubSubReceiver
-    {
-        if (!$this->receiver instanceof PubSubReceiver) {
-            $this->receiver = new PubSubReceiver($this->connection, $this->serializer);
-        }
-
-        return $this->receiver;
+        return $this->receiver->get();
     }
 
     public function getSerializer(): SerializerInterface
@@ -50,30 +43,21 @@ class PubSubTransport implements TransportInterface, SetupableTransportInterface
 
     public function ack(Envelope $envelope): void
     {
-        $this->getReceiver()->ack($envelope);
+        $this->receiver->ack($envelope);
     }
 
     public function reject(Envelope $envelope): void
     {
-        $this->getReceiver()->reject($envelope);
+        $this->receiver->reject($envelope);
     }
 
     public function send(Envelope $envelope): Envelope
     {
-        return $this->getSender()->send($envelope);
+        return $this->sender->send($envelope);
     }
 
-    private function getSender(): PubSubSender
+    public function getClient(): PubSubClient
     {
-        if (!$this->sender instanceof PubSubSender) {
-            $this->sender = new PubSubSender($this->connection, $this->serializer);
-        }
-
-        return $this->sender;
-    }
-
-    public function getConnection(): Connection
-    {
-        return $this->connection;
+        return $this->connection->getClient();
     }
 }

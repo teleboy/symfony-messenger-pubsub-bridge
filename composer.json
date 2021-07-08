@@ -7,6 +7,10 @@
         {
             "name": "Cedric Ziel",
             "email": "mail@cedric-ziel.com"
+        },
+        {
+            "name": "Teleboy",
+            "email": "dev@teleboy.ch"
         }
     ],
     "autoload": {
@@ -20,11 +24,19 @@
     "require": {
         "php": ">=7.4",
         "google/cloud-pubsub": "^1.29",
-        "symfony/messenger": "^5.3"
+        "psr/log": "^1.1",
+        "symfony/event-dispatcher-contracts": "^2.4",
+        "symfony/http-kernel": "^4.4|^5.3",
+        "symfony/messenger": "^4.4|^5.3"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^4.4 || ^5.0",
+        "jangregor/phpstan-prophecy": "^0.8.1",
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpstan/phpstan": "^0.12.91",
+        "phpstan/phpstan-phpunit": "^0.12.20",
+        "phpunit/phpunit": "^9.5",
         "symfony/event-dispatcher": "^4.4|^5.0",
+        "symfony/phpunit-bridge": "^4.4 || ^5.0",
         "symfony/process": "^4.4|^5.0",
         "symfony/property-access": "^4.4|^5.0",
         "symfony/serializer": "^4.4|^5.0"
@@ -34,9 +46,9 @@
         "ext-protobuf": "Improved performance for gRPC connections"
     },
     "scripts": {
-        "test": "@php vendor/bin/simple-phpunit"
+        "test": "@php vendor/phpunit/phpunit/phpunit",
+        "phpstan": "@php -d memory_limit=-1 vendor/phpstan/phpstan/phpstan analyse"
     },
-    "minimum-stability": "dev",
     "config": {
         "sort-packages": true
     },

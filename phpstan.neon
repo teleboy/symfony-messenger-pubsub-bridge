@@ -1,0 +1,10 @@
+parameters:
+    level: 5
+    paths:
+        - .
+    excludePaths:
+        analyse:
+            - vendor/*
+
+includes:
+    - vendor/jangregor/phpstan-prophecy/extension.neon

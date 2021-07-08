@@ -1,5 +1,10 @@
 # Google Cloud Pub/Sub bridge changelog
 
+## 0.4.0 - 2021-07-08
+* Do not instantiate objects inside classes, inject them instead. Mainly to improve testability
+* Abstract DSN & Pub/Sub config into classes
+* Declare missing Composer dependencies
+
 ## 0.3.0 - 2021-06-14
 * Fix missing `PubSubReceivedStamp` subscription when using pull delivery
 * Correctly read message IDs of published message

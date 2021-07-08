@@ -8,7 +8,6 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\LogicException;
 use Symfony\Component\Messenger\Exception\MessageDecodingFailedException;
 use Symfony\Component\Messenger\Transport\Receiver\ReceiverInterface;
-use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class PubSubReceiver implements ReceiverInterface
@@ -17,10 +16,10 @@ class PubSubReceiver implements ReceiverInterface
 
     private Connection $connection;
 
-    public function __construct(Connection $connection, SerializerInterface $serializer = null)
+    public function __construct(Connection $connection, SerializerInterface $serializer)
     {
         $this->connection = $connection;
-        $this->serializer = $serializer ?? new PhpSerializer();
+        $this->serializer = $serializer;
     }
 
     /**
@@ -54,6 +53,7 @@ class PubSubReceiver implements ReceiverInterface
         /* The subscription is only set on the message itself when it is obtained via push delivery,
         see the PHP doc of Google\Cloud\PubSub\Message::subscription().
         So we use the subscription which the connection uses as fallback */
+        /* @phpstan-ignore-next-line The return type phpdoc of $pubSubMessage->subscription() is not correct, should be Subscription|null */
         $subscription = $pubSubMessage->subscription() instanceof Subscription ? $pubSubMessage->subscription() : $this->connection->getSubscription();
 
         yield $envelope->with(new PubSubReceivedStamp($pubSubMessage, $subscription));
