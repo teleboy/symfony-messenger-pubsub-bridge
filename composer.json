@@ -25,7 +25,7 @@
         "php": ">=7.4",
         "google/cloud-pubsub": "^1.29",
         "psr/log": "^1.1",
-        "symfony/event-dispatcher-contracts": "^2.4",
+        "symfony/event-dispatcher-contracts": "^1.1|^2.4",
         "symfony/http-kernel": "^4.4|^5.3",
         "symfony/messenger": "^4.4|^5.3"
     },

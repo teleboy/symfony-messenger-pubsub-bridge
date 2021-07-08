@@ -1,5 +1,8 @@
 # Google Cloud Pub/Sub bridge changelog
 
+## 0.4.1 - 2021-07-08
+* Allow `symfony/event-dispatcher-contracts` `^1.1`
+
 ## 0.4.0 - 2021-07-08
 * Do not instantiate objects inside classes, inject them instead. Mainly to improve testability
 * Abstract DSN & Pub/Sub config into classes
