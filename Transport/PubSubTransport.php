@@ -18,12 +18,15 @@ class PubSubTransport implements TransportInterface, SetupableTransportInterface
 
     private PubSubSender $sender;
 
-    public function __construct(PubSubSender $sender, PubSubReceiver $receiver, Connection $connection, SerializerInterface $serializer)
+    private array $clientConfig;
+
+    public function __construct(PubSubSender $sender, PubSubReceiver $receiver, Connection $connection, SerializerInterface $serializer, array $clientConfig)
     {
-        $this->sender     = $sender;
-        $this->receiver   = $receiver;
-        $this->connection = $connection;
-        $this->serializer = $serializer;
+        $this->sender       = $sender;
+        $this->receiver     = $receiver;
+        $this->connection   = $connection;
+        $this->serializer   = $serializer;
+        $this->clientConfig = $clientConfig;
     }
 
     public function setup(): void
@@ -64,5 +67,10 @@ class PubSubTransport implements TransportInterface, SetupableTransportInterface
     public function getConnection(): Connection
     {
         return $this->connection;
+    }
+
+    public function getClientConfig(): array
+    {
+        return $this->clientConfig;
     }
 }

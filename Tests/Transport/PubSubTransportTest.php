@@ -55,6 +55,6 @@ class PubSubTransportTest extends TestCase
         $serializer = $serializer ?? $this->prophesize(SerializerInterface::class)->reveal();
         $connection = $connection ?? $this->prophesize(Connection::class)->reveal();
 
-        return new PubSubTransport($sender, $receiver, $connection, $serializer);
+        return new PubSubTransport($sender, $receiver, $connection, $serializer, []);
     }
 }
