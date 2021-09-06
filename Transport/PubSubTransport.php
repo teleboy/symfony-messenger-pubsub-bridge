@@ -60,4 +60,9 @@ class PubSubTransport implements TransportInterface, SetupableTransportInterface
     {
         return $this->connection->getClient();
     }
+
+    public function getConnection(): Connection
+    {
+        return $this->connection;
+    }
 }
