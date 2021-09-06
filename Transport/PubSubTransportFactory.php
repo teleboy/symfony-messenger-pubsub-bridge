@@ -30,7 +30,7 @@ class PubSubTransportFactory implements TransportFactoryInterface
             new PubSubReceiver($connection, $serializer),
             $connection,
             $serializer,
-            $dsnObject->getClientConfig()
+            $dsnObject->getClientConfig()->toArray()
         );
     }
 
