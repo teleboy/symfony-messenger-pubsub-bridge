@@ -36,7 +36,8 @@ class PubSubTransportFactoryTest extends TestCase
             new PubSubSender($connection, $serializer),
             new PubSubReceiver($connection, $serializer),
             $connection,
-            $serializer
+            $serializer,
+            $dsn->getClientConfig()->toArray()
         );
 
         self::assertEquals($expectedTransport, $factory->createTransport('pubsub://my-project/my-topic?subscription=foo', ['host' => 'localhost'], $serializer));
