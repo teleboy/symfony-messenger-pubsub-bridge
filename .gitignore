@@ -1,4 +1,12 @@
+/.idea
+
+/bin
 /vendor
 /composer.lock
-.phpunit.result.cache
-/.idea
+
+/.phpunit.result.cache
+/.php_cs.cache
+
+# osx
+._.DS_Store
+.DS_Store

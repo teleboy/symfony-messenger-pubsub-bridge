@@ -2,7 +2,7 @@
     "name": "teleboy/symfony-messenger-pubsub-bridge",
     "description": "Bridging Symfony Messenger with Google Cloud Pub/Sub",
     "type": "symfony-bridge",
-    "license": "MIT",
+    "license": "proprietary",
     "authors": [
         {
             "name": "Cedric Ziel",
@@ -13,13 +13,21 @@
             "email": "dev@teleboy.ch"
         }
     ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.teleboy.ch/"
+        }
+    ],
     "autoload": {
         "psr-4": {
-            "CedricZiel\\Symfony\\Messenger\\Bridge\\GcpPubSub\\": ""
-        },
-        "exclude-from-classmap": [
-            "/Tests/"
-        ]
+            "CedricZiel\\Symfony\\Messenger\\Bridge\\GcpPubSub\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CedricZiel\\Symfony\\Messenger\\Bridge\\GcpPubSub\\Tests\\": "Tests"
+        }
     },
     "require": {
         "php": ">=7.4",
@@ -39,22 +47,22 @@
         "symfony/phpunit-bridge": "^4.4 || ^5.0",
         "symfony/process": "^4.4|^5.0",
         "symfony/property-access": "^4.4|^5.0",
-        "symfony/serializer": "^4.4|^5.0"
+        "symfony/serializer": "^4.4|^5.0",
+        "teleboy/web.dev": "^6.0"
     },
     "suggest": {
         "ext-grpc": "Improved performance for gRPC connections",
         "ext-protobuf": "Improved performance for gRPC connections"
     },
     "scripts": {
-        "test": "@php vendor/phpunit/phpunit/phpunit",
-        "phpstan": "@php -d memory_limit=-1 vendor/phpstan/phpstan/phpstan analyse"
+        "test": "bin/phpunit --colors=auto",
+        "phpstan": "php -d memory_limit=-1 bin/phpstan analyse",
+        "phpstan-deprecations": "php -d memory_limit=-1 bin/phpstan analyse --configuration=phpstan.deprecations.neon",
+        "cs-review": "bin/php-cs-fixer fix --path-mode=override ./src ./Tests --config=vendor/teleboy/web.dev/.php-cs-fixer.dist.php --verbose --diff --dry-run",
+        "cs-fix": "bin/php-cs-fixer fix --path-mode=override ./src ./Tests --config=vendor/teleboy/web.dev/.php-cs-fixer.dist.php"
     },
     "config": {
+        "bin-dir": "bin",
         "sort-packages": true
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
-        }
     }
 }

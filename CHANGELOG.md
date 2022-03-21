@@ -1,5 +1,9 @@
 # Google Cloud Pub/Sub bridge changelog
 
+## 0.5.0 - 2022-03-21
+* Move code to [./src](./src) directory
+* Update `teleboy/web.dev` to `^6.0`
+
 ## 0.4.1 - 2021-07-08
 * Allow `symfony/event-dispatcher-contracts` `^1.1`
 
