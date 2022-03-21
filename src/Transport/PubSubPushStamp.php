@@ -1,5 +1,4 @@
 <?php
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport;
 
 use Symfony\Component\Messenger\Stamp\NonSendableStampInterface;
@@ -9,5 +8,4 @@ use Symfony\Component\Messenger\Stamp\NonSendableStampInterface;
  */
 class PubSubPushStamp implements NonSendableStampInterface
 {
-
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Tests\Transport;
 
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\Config\Dsn;
@@ -25,7 +24,7 @@ class PubSubTransportFactoryTest extends TestCase
 
     public function testCreateTransport(): void
     {
-        $factory = new PubSubTransportFactory();
+        $factory    = new PubSubTransportFactory();
         $serializer = $this->createMock(SerializerInterface::class);
 
         $dsn          = new Dsn('pubsub://my-project/my-topic?subscription=foo', ['host' => 'localhost']);

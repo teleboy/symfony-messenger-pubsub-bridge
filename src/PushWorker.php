@@ -1,5 +1,4 @@
 <?php
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub;
 
 use Psr\Log\LoggerInterface;
@@ -24,10 +23,11 @@ class PushWorker
 
     private LoggerInterface $logger;
 
-    public function __construct(MessageBusInterface $bus, EventDispatcherInterface $eventDispatcher = null, LoggerInterface $logger = null) {
-        $this->bus = $bus;
+    public function __construct(MessageBusInterface $bus, EventDispatcherInterface $eventDispatcher = null, LoggerInterface $logger = null)
+    {
+        $this->bus             = $bus;
         $this->eventDispatcher = $eventDispatcher;
-        $this->logger = $logger ?? new NullLogger();
+        $this->logger          = $logger ?? new NullLogger();
     }
 
     public function work(Envelope $envelope, string $transportName): void
@@ -44,6 +44,7 @@ class PushWorker
             $envelope = $this->bus->dispatch($envelope->with(new ReceivedStamp($transportName), new ConsumedByWorkerStamp()));
         } catch (\Throwable $throwable) {
             $rejectFirst = $throwable instanceof RejectRedeliveredMessageException;
+
             if ($rejectFirst) {
                 // redelivered messages are rejected first so that continuous failures in an event listener or while
                 // publishing for retry does not cause infinite redelivery loops
@@ -67,7 +68,7 @@ class PushWorker
         $message = $envelope->getMessage();
         $context = [
             'message' => $message,
-            'class' => get_class($message),
+            'class'   => \get_class($message),
         ];
         $this->logger->info('{class} was handled successfully (acknowledging to transport).', $context);
 

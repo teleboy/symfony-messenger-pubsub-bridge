@@ -1,5 +1,4 @@
 <?php
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Tests\Transport;
 
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Tests\Fixtures\DummyMessage;
@@ -14,7 +13,7 @@ class PubSubSenderTest extends TestCase
     public function testItSendsTheEncodedMessage(): void
     {
         $envelope = new Envelope(new DummyMessage('Oy'));
-        $encoded = ['body' => '...', 'headers' => ['type' => DummyMessage::class]];
+        $encoded  = ['body' => '...', 'headers' => ['type' => DummyMessage::class]];
 
         $serializer = $this->createMock(SerializerInterface::class);
         $serializer->method('encode')->with($envelope)->willReturnOnConsecutiveCalls($encoded);
@@ -29,7 +28,7 @@ class PubSubSenderTest extends TestCase
     public function testItSendsTheEncodedMessageWithoutHeaders(): void
     {
         $envelope = new Envelope(new DummyMessage('Oy'));
-        $encoded = ['body' => '...'];
+        $encoded  = ['body' => '...'];
 
         $serializer = $this->createMock(SerializerInterface::class);
         $serializer->method('encode')->with($envelope)->willReturnOnConsecutiveCalls($encoded);

@@ -1,5 +1,4 @@
 <?php
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport;
 
 use Google\Cloud\PubSub\PubSubClient;

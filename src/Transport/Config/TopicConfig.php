@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\Config;
 
 class TopicConfig

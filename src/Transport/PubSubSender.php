@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport;
 
 use Symfony\Component\Messenger\Envelope;
@@ -24,6 +23,7 @@ class PubSubSender implements SenderInterface
     public function send(Envelope $envelope): Envelope
     {
         $encodedMessage = $this->serializer->encode($envelope);
+
         try {
             $publishedMessages = $this->connection->publish($encodedMessage['body'], $encodedMessage['headers'] ?? []);
 

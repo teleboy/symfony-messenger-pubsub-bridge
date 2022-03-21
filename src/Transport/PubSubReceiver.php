@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport;
 
 use Google\Cloud\PubSub\Subscription;
@@ -30,23 +29,43 @@ class PubSubReceiver implements ReceiverInterface
         yield from $this->getEnvelope();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function ack(Envelope $envelope): void
+    {
+        $stamp = $this->findPubSubStamp($envelope);
+
+        $this->connection->ack($stamp->getMessage(), $stamp->getSubscription());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function reject(Envelope $envelope): void
+    {
+        $stamp = $this->findPubSubStamp($envelope);
+
+        $this->connection->nack($stamp->getMessage(), $stamp->getSubscription());
+    }
+
     private function getEnvelope(): iterable
     {
         $pubSubMessage = $this->connection->get();
+
         if (null === $pubSubMessage) {
             return;
         }
 
-        $body = $pubSubMessage->data();
+        $body       = $pubSubMessage->data();
         $attributes = $pubSubMessage->attributes();
 
         try {
             $envelope = $this->serializer->decode([
-                'body' => $body,
+                'body'    => $body,
                 'headers' => $attributes,
             ]);
         } catch (MessageDecodingFailedException $exception) {
-
             throw $exception;
         }
 
@@ -59,33 +78,14 @@ class PubSubReceiver implements ReceiverInterface
         yield $envelope->with(new PubSubReceivedStamp($pubSubMessage, $subscription));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function ack(Envelope $envelope): void
-    {
-        $stamp = $this->findPubSubStamp($envelope);
-
-        $this->connection->ack($stamp->getMessage(), $stamp->getSubscription());
-    }
-
     private function findPubSubStamp(Envelope $envelope): PubSubReceivedStamp
     {
         $pubSubReceivedStamp = $envelope->last(PubSubReceivedStamp::class);
+
         if (!$pubSubReceivedStamp instanceof PubSubReceivedStamp) {
             throw new LogicException('No "PubSubReceivedStamp" stamp found on the Envelope.');
         }
 
         return $pubSubReceivedStamp;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function reject(Envelope $envelope): void
-    {
-        $stamp = $this->findPubSubStamp($envelope);
-
-        $this->connection->nack($stamp->getMessage(), $stamp->getSubscription());
     }
 }

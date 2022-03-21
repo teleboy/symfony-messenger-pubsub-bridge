@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\Config;
 
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\PubSubTransportFactory;
@@ -21,7 +20,7 @@ class Dsn
         if (false === $urlParts) {
             // It may be a valid URI that parse_url() cannot handle when you want to pass all parameters as options
             if ($dsn !== PubSubTransportFactory::GOOGLE_CLOUD_PUBSUB_PROTO_SCHEME) {
-                throw new InvalidArgumentException(sprintf('The given PubSub DSN "%s" is invalid.', $dsn));
+                throw new InvalidArgumentException(\sprintf('The given PubSub DSN "%s" is invalid.', $dsn));
             }
 
             $urlParts = [];
@@ -41,6 +40,21 @@ class Dsn
         $this->subscriptionConfig = $this->createSubscriptionConfig($queryParts);
     }
 
+    public function getClientConfig(): ClientConfig
+    {
+        return $this->clientConfig;
+    }
+
+    public function getTopicConfig(): TopicConfig
+    {
+        return $this->topicConfig;
+    }
+
+    public function getSubscriptionConfig(): SubscriptionConfig
+    {
+        return $this->subscriptionConfig;
+    }
+
     private function createClientConfig(array $urlParts, array $queryParts, array $clientOptions): ClientConfig
     {
         $config = \array_merge(
@@ -50,11 +64,6 @@ class Dsn
         );
 
         return ClientConfig::fromArray($config);
-    }
-
-    public function getClientConfig(): ClientConfig
-    {
-        return $this->clientConfig;
     }
 
     private function createTopicConfig(array $pathParts): TopicConfig
@@ -68,23 +77,14 @@ class Dsn
         return new TopicConfig($topicName);
     }
 
-    public function getTopicConfig(): TopicConfig
-    {
-        return $this->topicConfig;
-    }
-
     private function createSubscriptionConfig(array $queryParts): SubscriptionConfig
     {
         $subscriptionName = $queryParts['subscription'] ?? null;
+
         if (empty($subscriptionName) || !\is_string($subscriptionName)) {
             throw new InvalidArgumentException('You need to supply a subscription name');
         }
 
         return new SubscriptionConfig($subscriptionName);
-    }
-
-    public function getSubscriptionConfig(): SubscriptionConfig
-    {
-        return $this->subscriptionConfig;
     }
 }

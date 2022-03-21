@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\Config;
 
 class ClientConfig
@@ -36,24 +35,31 @@ class ClientConfig
             if ($key === 'projectId') {
                 $projectId = $item;
             }
+
             if ($key === 'apiEndpoint') {
                 $apiEndpoint = $item;
             }
+
             if ($key === 'keyFilePath') {
                 $keyFilePath = $item;
             }
+
             if ($key === 'requestTimeout') {
                 $requestTimeout = $item;
             }
+
             if ($key === 'retries') {
                 $retries = $item;
             }
+
             if ($key === 'scopes') {
                 $scopes = $item;
             }
+
             if ($key === 'quotaProject') {
                 $quotaProject = $item;
             }
+
             if ($key === 'transport') {
                 $transport = $item;
             }
@@ -80,8 +86,7 @@ class ClientConfig
         ?string $scopes = null,
         ?string $quotaProject = null,
         ?string $transport = null
-    )
-    {
+    ) {
         $this->projectId      = $projectId;
         $this->apiEndpoint    = $apiEndpoint;
         $this->keyFilePath    = $keyFilePath;
@@ -94,26 +99,32 @@ class ClientConfig
 
     public function toArray(): array
     {
-        $array = ['projectId'   => $this->projectId];
+        $array = ['projectId' => $this->projectId];
 
         if ($this->apiEndpoint) {
             $array['apiEndpoint'] = $this->apiEndpoint;
         }
+
         if ($this->keyFilePath) {
             $array['keyFilePath'] = $this->keyFilePath;
         }
+
         if ($this->requestTimeout) {
             $array['requestTimeout'] = $this->requestTimeout;
         }
+
         if ($this->retries) {
             $array['retries'] = $this->retries;
         }
+
         if ($this->scopes) {
             $array['scopes'] = $this->scopes;
         }
+
         if ($this->quotaProject) {
             $array['quotaProject'] = $this->quotaProject;
         }
+
         if ($this->transport) {
             $array['transport'] = $this->transport;
         }

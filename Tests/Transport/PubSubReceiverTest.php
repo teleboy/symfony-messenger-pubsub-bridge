@@ -1,5 +1,4 @@
 <?php
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Tests\Transport;
 
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Tests\Fixtures\DummyMessage;
@@ -27,34 +26,20 @@ class PubSubReceiverTest extends TestCase
         );
 
         $pubSubMessage = $this->createPubSubMessage();
-        $connection = $this->createMock(Connection::class);
+        $connection    = $this->createMock(Connection::class);
         $connection->method('get')->willReturn($pubSubMessage);
 
-        $receiver = new PubSubReceiver($connection, $serializer);
-        $actualEnvelopes = iterator_to_array($receiver->get());
+        $receiver        = new PubSubReceiver($connection, $serializer);
+        $actualEnvelopes = \iterator_to_array($receiver->get());
 
         self::assertCount(1, $actualEnvelopes);
         self::assertEquals(new DummyMessage('Hi'), $actualEnvelopes[0]->getMessage());
     }
 
-    private function createPubSubMessage(): Message
-    {
-        $subscription = $this->createMock(Subscription::class);
-        $envelope = $this->createMock(Message::class);
-
-        $envelope->method('data')->willReturn('{"message": "Hi"}');
-        $envelope->method('attributes')->willReturn([
-            'type' => DummyMessage::class,
-        ]);
-        $envelope->method('subscription')->willReturn($subscription);
-
-        return $envelope;
-    }
-
     public function testItThrowsATransportExceptionIfItCannotAcknowledgeMessage()
     {
         $this->expectException(TransportException::class);
-        $serializer = $this->createMock(SerializerInterface::class);
+        $serializer    = $this->createMock(SerializerInterface::class);
         $pubSubMessage = $this->createPubSubMessage();
 
         $connection = $this->createMock(Connection::class);
@@ -71,9 +56,9 @@ class PubSubReceiverTest extends TestCase
     public function testItThrowsATransportExceptionIfItCannotRejectMessage()
     {
         $this->expectException(TransportException::class);
-        $serializer = $this->createMock(SerializerInterface::class);
+        $serializer    = $this->createMock(SerializerInterface::class);
         $pubSubMessage = $this->createPubSubMessage();
-        $connection = $this->createMock(Connection::class);
+        $connection    = $this->createMock(Connection::class);
         $connection->method('get')->willReturn($pubSubMessage);
         $connection->method('nack')->with($pubSubMessage)->willThrowException(new TransportException());
 
@@ -81,5 +66,19 @@ class PubSubReceiverTest extends TestCase
 
         $receiver = new PubSubReceiver($connection, $serializer);
         $receiver->reject(new Envelope(new stdClass(), [new PubSubReceivedStamp($pubSubMessage, $subscription)]));
+    }
+
+    private function createPubSubMessage(): Message
+    {
+        $subscription = $this->createMock(Subscription::class);
+        $envelope     = $this->createMock(Message::class);
+
+        $envelope->method('data')->willReturn('{"message": "Hi"}');
+        $envelope->method('attributes')->willReturn([
+            'type' => DummyMessage::class,
+        ]);
+        $envelope->method('subscription')->willReturn($subscription);
+
+        return $envelope;
     }
 }

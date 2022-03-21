@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Tests\Transport;
 
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Tests\Fixtures\DummyMessage;
@@ -9,10 +8,10 @@ use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\PubSubReceiver;
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\PubSubSender;
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\PubSubTransport;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 use Symfony\Component\Messenger\Transport\TransportInterface;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class PubSubTransportTest extends TestCase
 {
@@ -48,8 +47,7 @@ class PubSubTransportTest extends TestCase
         PubSubReceiver $receiver = null,
         SerializerInterface $serializer = null,
         Connection $connection = null
-    ): PubSubTransport
-    {
+    ): PubSubTransport {
         $sender     = $sender ?? $this->prophesize(PubSubSender::class)->reveal();
         $receiver   = $receiver ?? $this->prophesize(PubSubReceiver::class)->reveal();
         $serializer = $serializer ?? $this->prophesize(SerializerInterface::class)->reveal();

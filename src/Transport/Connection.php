@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport;
 
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\Config\SubscriptionConfig;
@@ -27,6 +26,21 @@ class Connection
         $this->subscriptionConfig = $subscriptionConfig;
     }
 
+    public function setup(): void
+    {
+        $topicName = $this->topicConfig->getName();
+
+        if (!$this->client->topic($topicName)->exists()) {
+            $this->client->topic($topicName)->create();
+        }
+
+        $subscriptionName = $this->subscriptionConfig->getName();
+
+        if (!$this->client->subscription($subscriptionName, $topicName)->exists()) {
+            $this->client->subscription($subscriptionName, $topicName)->create();
+        }
+    }
+
     public function publish(string $body, array $headers = []): array
     {
         return $this->publishOnTopic(
@@ -34,19 +48,6 @@ class Connection
             $body,
             $headers
         );
-    }
-
-    private function publishOnTopic(Topic $topic, string $body, array $headers): array
-    {
-        return $topic->publish(new Message([
-            'attributes' => $headers,
-            'data' => $body,
-        ]));
-    }
-
-    private function topic(): Topic
-    {
-        return $this->client->topic($this->topicConfig->getName());
     }
 
     public function get(): ?Message
@@ -66,8 +67,8 @@ class Connection
     {
         if (!$this->subscription instanceof Subscription) {
             $this->subscription = $this->client->subscription(
-                    $this->subscriptionConfig->getName(),
-                    $this->topicConfig->getName()
+                $this->subscriptionConfig->getName(),
+                $this->topicConfig->getName()
             );
         }
 
@@ -79,19 +80,6 @@ class Connection
         $subscription->acknowledge($message);
     }
 
-    public function setup(): void
-    {
-        $topicName = $this->topicConfig->getName();
-        if (!$this->client->topic($topicName)->exists()) {
-            $this->client->topic($topicName)->create();
-        }
-
-        $subscriptionName = $this->subscriptionConfig->getName();
-        if (!$this->client->subscription($subscriptionName, $topicName)->exists()) {
-            $this->client->subscription($subscriptionName, $topicName)->create();
-        }
-    }
-
     public function nack(Message $getMessage, Subscription $getSubscription): void
     {
         // everything else than ack will result in nack
@@ -100,5 +88,18 @@ class Connection
     public function getClient(): PubSubClient
     {
         return $this->client;
+    }
+
+    private function publishOnTopic(Topic $topic, string $body, array $headers): array
+    {
+        return $topic->publish(new Message([
+            'attributes' => $headers,
+            'data'       => $body,
+        ]));
+    }
+
+    private function topic(): Topic
+    {
+        return $this->client->topic($this->topicConfig->getName());
     }
 }

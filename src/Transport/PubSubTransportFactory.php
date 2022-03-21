@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport;
 
 use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\Config\Dsn;
@@ -12,13 +11,13 @@ use Symfony\Component\Messenger\Transport\TransportInterface;
 
 class PubSubTransportFactory implements TransportFactoryInterface
 {
-    private const GOOGLE_CLOUD_PUBSUB_SCHEME = 'pubsub';
     public const GOOGLE_CLOUD_PUBSUB_PROTO_SCHEME = 'pubsub://';
+    private const GOOGLE_CLOUD_PUBSUB_SCHEME      = 'pubsub';
 
     public function createTransport(string $dsn, array $options, SerializerInterface $serializer): TransportInterface
     {
         if (!$this->supports($dsn, $options)) {
-            throw new InvalidArgumentException(sprintf('Invalid DSN: %s', self::GOOGLE_CLOUD_PUBSUB_SCHEME));
+            throw new InvalidArgumentException(\sprintf('Invalid DSN: %s', self::GOOGLE_CLOUD_PUBSUB_SCHEME));
         }
 
         $dsnObject    = new Dsn($dsn, $options);
