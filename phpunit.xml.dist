@@ -10,7 +10,7 @@
   </php>
   <testsuites>
     <testsuite name="Symfony Google Cloud Platform Pub/Sub Messenger Bridge Test Suite">
-      <directory>./Tests/</directory>
+      <directory>tests/</directory>
     </testsuite>
   </testsuites>
 </phpunit>
