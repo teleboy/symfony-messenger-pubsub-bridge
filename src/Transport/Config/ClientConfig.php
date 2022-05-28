@@ -73,7 +73,7 @@ class ClientConfig
             $retries,
             $scopes,
             $quotaProject,
-            $transport
+            $transport,
         );
     }
 

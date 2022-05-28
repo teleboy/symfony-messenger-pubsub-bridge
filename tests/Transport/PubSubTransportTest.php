@@ -33,7 +33,7 @@ class PubSubTransportTest extends TestCase
 
         $transport = $this->buildTransport(
             null,
-            $receiver->reveal()
+            $receiver->reveal(),
         );
 
         $envelopes = \iterator_to_array($transport->get(), false);

@@ -60,7 +60,7 @@ class Dsn
         $config = \array_merge(
             ['projectId' => $urlParts['host'] ?? null],
             $queryParts,
-            $clientOptions
+            $clientOptions,
         );
 
         return ClientConfig::fromArray($config);

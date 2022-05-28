@@ -8,7 +8,6 @@ use CedricZiel\Symfony\Messenger\Bridge\GcpPubSub\Transport\PubSubReceiver;
 use Google\Cloud\PubSub\Message;
 use Google\Cloud\PubSub\Subscription;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\TransportException;
 use Symfony\Component\Messenger\Transport\Serialization\Serializer;
@@ -19,10 +18,10 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class PubSubReceiverTest extends TestCase
 {
-    public function testItReturnsTheDecodedMessageToTheHandler()
+    public function testItReturnsTheDecodedMessageToTheHandler(): void
     {
         $serializer = new Serializer(
-            new SerializerComponent\Serializer([new ObjectNormalizer()], ['json' => new JsonEncoder()])
+            new SerializerComponent\Serializer([new ObjectNormalizer()], ['json' => new JsonEncoder()]),
         );
 
         $pubSubMessage = $this->createPubSubMessage();
@@ -36,7 +35,7 @@ class PubSubReceiverTest extends TestCase
         self::assertEquals(new DummyMessage('Hi'), $actualEnvelopes[0]->getMessage());
     }
 
-    public function testItThrowsATransportExceptionIfItCannotAcknowledgeMessage()
+    public function testItThrowsATransportExceptionIfItCannotAcknowledgeMessage(): void
     {
         $this->expectException(TransportException::class);
         $serializer    = $this->createMock(SerializerInterface::class);
@@ -50,10 +49,10 @@ class PubSubReceiverTest extends TestCase
 
         $receiver = new PubSubReceiver($connection, $serializer);
 
-        $receiver->ack(new Envelope(new stdClass(), [new PubSubReceivedStamp($pubSubMessage, $subscription)]));
+        $receiver->ack(new Envelope(new \stdClass(), [new PubSubReceivedStamp($pubSubMessage, $subscription)]));
     }
 
-    public function testItThrowsATransportExceptionIfItCannotRejectMessage()
+    public function testItThrowsATransportExceptionIfItCannotRejectMessage(): void
     {
         $this->expectException(TransportException::class);
         $serializer    = $this->createMock(SerializerInterface::class);
@@ -65,7 +64,7 @@ class PubSubReceiverTest extends TestCase
         $subscription = $this->createMock(Subscription::class);
 
         $receiver = new PubSubReceiver($connection, $serializer);
-        $receiver->reject(new Envelope(new stdClass(), [new PubSubReceivedStamp($pubSubMessage, $subscription)]));
+        $receiver->reject(new Envelope(new \stdClass(), [new PubSubReceivedStamp($pubSubMessage, $subscription)]));
     }
 
     private function createPubSubMessage(): Message

@@ -46,7 +46,7 @@ class Connection
         return $this->publishOnTopic(
             $this->topic(),
             $body,
-            $headers
+            $headers,
         );
     }
 
@@ -68,7 +68,7 @@ class Connection
         if (!$this->subscription instanceof Subscription) {
             $this->subscription = $this->client->subscription(
                 $this->subscriptionConfig->getName(),
-                $this->topicConfig->getName()
+                $this->topicConfig->getName(),
             );
         }
 
