@@ -1,5 +1,8 @@
 # Google Cloud Pub/Sub bridge changelog
 
+## 0.6.0 - 2022-05-28
+* Applying PHP CS Fixer
+
 ## 0.5.1 - 2022-03-21
 * Fix PHP CS errors
 
