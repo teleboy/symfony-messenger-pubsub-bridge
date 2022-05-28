@@ -38,17 +38,11 @@
         "symfony/messenger": "^4.4|^5.3"
     },
     "require-dev": {
-        "jangregor/phpstan-prophecy": "^0.8.1",
-        "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan": "^0.12.91",
-        "phpstan/phpstan-phpunit": "^0.12.20",
-        "phpunit/phpunit": "^9.5",
         "symfony/event-dispatcher": "^4.4|^5.0",
-        "symfony/phpunit-bridge": "^4.4 || ^5.0",
         "symfony/process": "^4.4|^5.0",
         "symfony/property-access": "^4.4|^5.0",
         "symfony/serializer": "^4.4|^5.0",
-        "teleboy/web.dev": "^6.0"
+        "teleboy/web.dev": "^8.0"
     },
     "suggest": {
         "ext-grpc": "Improved performance for gRPC connections",
