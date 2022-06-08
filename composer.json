@@ -13,12 +13,13 @@
             "email": "dev@teleboy.ch"
         }
     ],
-    "repositories": [
-        {
+    "repositories": {
+        "packagist": false,
+        "private-packagist": {
             "type": "composer",
-            "url": "https://packages.teleboy.ch/"
+            "url": "https://repo.packagist.com/teleboy/"
         }
-    ],
+    },
     "autoload": {
         "psr-4": {
             "CedricZiel\\Symfony\\Messenger\\Bridge\\GcpPubSub\\": "src"
